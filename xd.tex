@@ -1,0 +1,193 @@
+\documentclass[a4paper,12pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{systeme}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,247mm},
+ left=20mm,
+ top=30mm,
+ }
+
+% makro
+\newcommand{\doubleLine}{
+    \vspace*{20px} \\
+}
+\newcommand{\dolGora}[2]{
+    _{#1}^{#2}
+}
+\newcommand{\klamry}[1]{
+    \{#1\}
+}
+\newcommand{\iterate}[1]{
+    \klamry{#1}\dolGora{i=1}{|#1|}
+}
+\newcommand{\iterateParam}[2]{
+    \klamry{#1}\dolGora{i=1}{|#2|}
+}
+
+% end of makro
+
+
+\title{%
+  Wojskowa Akademia Techniczna \\~\\
+  \large Modelowanie Matematyczne Ćwiczenia \\~\\
+    \textbf{Prowadzący:} mgr. inż. Michał Kapałka \\~\\
+    \textbf{Temat:} Problem optymalnego przydzielenia wątków do procesorów}
+\author{\textbf{Autor:} Michał Konopka}
+\date{Czerwiec 2020}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Opis problemu}
+Istnieje zbiór wątków które procesory muszą rozwiązać w skończonym czasie. Pewne zadania wymagają specjalnych zasobów. Zasób może być używany tylko przez jeden proces. Jak największa ilość wątków powinna zostać zakończona w zadanym czasie z wykorzystaniem jak najmniejszej ilości energii. Każdy procesor ma inną szybkość i inne zużycie energii. Zużycie energii  zmienia się w stanie spoczynku procesora(kiedy procesor nie wykonuje żadnej pracy). Każdy wątek może być wykonywany tylko na jednym procesorze. Każdy wątek ma ilość jednostek czasu potrzebną na wykonanie wątku.\\
+
+\section{Model matematyczny opisanego problemu}
+    \subsection{Matematyczny opis cech istotnych}
+        \begin{itemize}
+            \item	$P$ -  zbiór identyfikatorów procesorów $P \in 2^N$
+            \item	$W$ -  zbiór identyfikatorów wątków $W \in 2^N$
+            \item	$Z$ -  zbiór identyfikatorów zasobów $Z \in 2^N$
+            \item   $\tau$ - zadany odcinek czasu ( w jednostce czasu) $\tau \in N_+$
+            \item   $\omega_w$ - odcinek czasu przeznaczony dla w-tego wątku (w jednostce czasu) $\omega \in N_+, w \in W $ 
+            \item   $Z^{wy}_w$ - zbiór zasobów wymaganych przez w-ty wątek $Z^{wy} \in 2^N, w \in W $
+            \item	${Wy_{p}}$ - wydajność p-tego procesora w jednostkach $W_y \in N_+, p \in P$
+            \item	$L_w$ – Ilość jednostek potrzebnych na wykonanie w-tego wątku$L \in N_+, w \in W$
+            \item	$E_p$ - Współczynnik zużycia energii p-tego procesora $E \in N_+ , p \in P$
+            \item   $E\dolGora{p}{s}$ - Spoczynkowy współczynnik zużycia energii p-tego procesora $E^s \in N_+ , p \in P$
+            \item	$M_{p}$ – Zbiór identyfikatorów wątków przypisanych p-temu procesowi $M \in 2^N, p \in P$
+            \item   $Q_{w}$ - Zbiór identyfikatorów zasobów przypisanych w-temu wątkowi $Q \in 2^N, p \in P$
+            \item	$K$ – Koszt energetyczny $K \in N$
+            \item   $J$ - Ilość ukończonych wątków $J \in N$
+        \end{itemize}   
+
+\newpage
+\section{Matematyczny opis istotnych związków między wybranymi cechami}
+    \begin{itemize}
+        \item $R_0$ : Wątek może być przypisany tylko do jednego procesora  \doubleLine
+            $R_0 = \{<\{M\}\dolGora{p=1}{|P|}> \in N^{|P|} : \forall_{i \in P} \forall_{j \in P} M_i \cap M_j = \emptyset \}$
+        
+        \item $R_1$ : Zasób może być wykorzystywany tylko przez jeden wątek
+            \doubleLine
+            $ R_1 = \klamry{ <\{Q\}\dolGora{p=1}{|W|}> \in N^{|W|} : \forall_{i \in W} \forall_{j \in W} Q_i \cap Q_j = \emptyset } $
+
+        \item $R_2$ : Spoczynkowe współczynnik energii procesora musi być niższy lub równy niż współczynnik w stanie aktywnym
+        \doubleLine
+            $ R_2 = \{<\klamry{E}\dolGora{p=1}{|P|}, \klamry{E^s}\dolGora{p=1}{|P|}> \in <N^{2|P|}> : \forall_{p \in P}(E^s_p \leq E_p)  \}$
+        
+        \item $R_3$ : Wątek może być przypisany do procesu tylko gdy ma dostępne zasoby
+        \doubleLine
+            $R_3 = \{<\klamry{P}\dolGora{p=1}{|P|},\klamry{\klamry{M}\dolGora{w=1}{|M|}}\dolGora{p=1}{|P|},\klamry{Z}\dolGora{z=1}{|Z|}, \klamry{Z^{wy}}\dolGora{w=1}{|W|}> \in <N^{|P|},N^{|W|^{|P|}} ,N^{|Z|}, N^{|W|}> : \\
+             \forall_{p \in P}
+             \forall_{w \in M_p} (Z^{wy}_w \cap Z = Z^{wy}_w)  \} $
+             
+        \item $R_4$ : Ilość ukończonych wątków 
+        \doubleLine
+         $B(a,b)=\systeme*{1 \mbox{ gdy } a \geq b,0 \mbox{ p.p} }$ \\
+            $R_4 = \{ <\iterateParam{W_y}{P},\iterate{P},J,\tau,\iterateParam{L}{W},\iterateParam{\omega}{W},\klamry{\iterateParam{M}{M}}\dolGora{i=1}{|P|}> \in <N^{2|P|+2},N^{2(|W|)}, N^{|M|^{|P|}} >\\
+              :J=\sum_{p \in P}\sum_{w \in M_p} B(Wy_p  * \omega_w  , L_w) \}$
+
+        \item $R_5$ : Ilość zużytej energii
+        \doubleLine
+            $<\iterate{P},\klamry{\iterateParam{M}{M}}\dolGora{i=1}{|P|},\klamry{E}\dolGora{p=1}{|P|}, \klamry{E^s}\dolGora{p=1}{|P|},\tau,\iterateParam{\omega}{W},K> \in <N^{|P|},N^{|M|^{|P|}},N^{2|P|},N_+,N_+^{|W|},N_+> :\\ 
+            K = \sum_{p \in P} \sum_{w \in M_p} \Big(E_p * \omega_w + 
+            (E^s_p * (\tau - \sum_{w \in M_p} \omega_w ))\Big)$
+        
+        \item $R_6$ : Czas przeznaczony na wszystkie wątki nie może przekraczać dostępnego czasu
+        \doubleLine
+            $R_6 =\{<\iterateParam{\omega}{W},\tau,P> \in <N^{|W| + 1 + |P|}> : \big(\sum_{t \in \omega}t\big) \leq \tau * |P|  \}$
+    \end{itemize}
+
+\newpage
+\section{Podział cech na zmienne decyzyjne, wskaźniki i dane}
+    \subsection{Zmienne decyzyjne}
+    $x = < \klamry{M}\dolGora{p=1}{|P|},\klamry{\omega}\dolGora{w=1}{|W|},\iterateParam{Q}{W}>$
+    
+    \subsection{Dane}
+    $a = \{<\iterate{P},\iterate{W},\iterate{Z},\iterateParam{L}{W},\iterateParam{E_p}{P},\iterateParam{E^s}{P},\iterateParam{W^{wy}}{P},\iterateParam{Wy}{P},\iterateParam{\omega}{W},\iterateParam{L}{W},\tau>\}$
+    
+    \subsection{Wskaźniki}
+    $W = \{<K,J>\}$
+
+\section{Analiza poziomu informacyjnego}
+    \begin{itemize}
+        \item	$M_{p}$ – Zbiór identyfikatorów wątków przypisanych p-temu procesowi\\ Zbiór ten nie jest znany podczas podejmowania decyzji ponieważ jest to zmienna decyzyjna
+        \item   $Q_{w}$ - Zbiór identyfikatorów zasobów przypisanych w-temu wątkowi \\ Zbiór ten nie jest znany podczas podejmowania decyzji
+        \item	$K$ – Koszt energetyczny, ponieważ jest to  wskaźnik dlatego jej wartość nie jest znana w momencie podejmowania decyzji
+        \item   $J$ - Ilość ukończonych wątków, ponieważ jest to  wskaźnik dlatego jego wartość nie jest znana w momencie podejmowania decyzji 
+        \item $\omega$ - Czas przeznaczony dla w-tego wątku jest zmienną decyzyjną więc jego wartość ustala decydent, w chwili podejmowania decyzji
+        \item	$P$ -  Zbiór ten jest znany w momencie podejmowania decyzji, ponieważ jest to dana
+        \item	$W$ -  Zbiór ten jest znany w momencie podejmowania decyzji, ponieważ jest to dana
+        \item	$Z$ -  Zbiór ten jest znany w momencie podejmowania decyzji, ponieważ jest to dana
+        \item   $\tau$ - Zadany odcinek czasowy, znana wartość liczbowa 
+        \item   $Z^{wy}_w$ - Zbiór zasobów, znany w momencie podejmowania decyzji
+        \item	${Wy_{p}}$ - Wartość znana dla p-tego procesora w momencie podejmowania decyzji
+        \item	$L_w$ – Wartość liczbowa dla danego wątku znana w momencie podejmowania decyzji
+        \item	$E_p$ - Współczynnik zużycia energii znany w momencie podejmowania decyzji
+        \item   $E\dolGora{p}{s}$ - Spoczynkowy współczynnik zużycia energii znany w momencie podejmowania decyzji
+    \end{itemize}
+
+\newpage
+\section{Określenie poprawnych zbiorów danych, wartości zmiennych decyzyjnych, wartości wskaźników}
+    \subsection{Zbiór poprawnych danych}
+    $A=\{<\iterate{P},\iterate{W},\iterate{Z},\iterateParam{L}{W},\iterateParam{E_p}{P},\iterateParam{E^s}{P},\iterateParam{W^{wy}}{P},\iterateParam{Wy}{P},\iterateParam{\omega}{W},\iterateParam{L}{W},\tau> \\ \in <N^{|P|},N^{|W|},N^{|Z|},N_+^{|W|},N_+^{4|P|},N^{2|W|},N_+>: 
+    \forall_{p \in P}(E^s_p \leq E_p)
+    \} $
+
+    \subsection{Zbiór dopuszczalnych zestawów wartości zmiennych decyzyjnych}
+    $\Omega(a) =\{ < \klamry{M}\dolGora{p=1}{|P|},\klamry{\omega}\dolGora{w=1}{|W|},\iterateParam{Q}{W} > \in <N^{0..|W|^{|P|}},N_+^{|W|},N^{0..|Z|^{|W|}} >: \forall_{i \in P} \forall_{j \in P} M_i \cap M_j = \emptyset,\forall_{p \in P}
+    \forall_{w \in M_p} (Z^{wy}_w \cap Z = Z^{wy}_w),\forall_{i \in W} \forall_{j \in W} Q_i \cap Q_j = \emptyset, \big(\sum_{t \in \omega}t\big) \leq \tau * |P| \} $
+
+    \subsection{Zbiór możliwych wartości wskaźników}
+    $$B(a,b)=\systeme*{1 \mbox{ gdy } a \geq b,0 \mbox{ p.p} }$$
+    $W(a,x)=\{<K,J> \in <N_+^2>: K = \sum_{p \in P} \sum_{w \in M_p} \Big(E_p * \omega_w + (E^s_p * (\tau - \sum_{w \in M_p} \omega_w ))\Big), J=\sum_{p \in P}\sum_{w \in M_p} B(Wy_p  * \omega_w  , L_w) \}$
+
+\section{Funkcja osiągnięcia celu}
+    $$k(x,a)=\sum_{p \in P} \sum_{w \in M_p} \Big(E_p * \omega_w + 
+    (E^s_p * (\tau - \sum_{w \in M_p} \omega_w ))\Big)$$
+    $$j(x,a)=\sum_{p \in P}\sum_{w \in M_p} B(Wy_p  * \omega_w  , L_w)$$
+    $$F(x,a)=\{<j(x,a),k(x,a)> \in <N_+^2>: x \in \Omega(a), a \in A\}$$
+    $$\lambda_{n-1}\in R,\lambda_n\in R,\mbox{ gdzie } n=2$$
+    \begin{center}
+        Przyjmujemy, że wagi $\lambda$ i wskaźniki $F$ są znormalizowane.
+    \end{center}
+    $E_a(F(x^*,a))=\systeme*{1 \mbox{ gdy } 
+    \sum_{i=1}^{n}F_i(x^*\mbox{,}a) * \lambda_i 
+    =  max_{x \in \Omega(a)} \sum_{i=1}^{n}F_i(x\mbox{,}a)*\lambda_i
+    ,0 \mbox{ gdy } p.p}$
+
+\section{Zadanie optymalizacyjne}
+
+    \begin{center}
+        Dla danych
+        $$a \in A$$
+        wyznaczyć takie
+        $$x \in \Omega(a)$$
+        aby
+        $$ E_a(F(x*,a)) = 1 $$
+    \end{center}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}

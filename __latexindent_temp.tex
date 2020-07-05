@@ -1,0 +1,86 @@
+\documentclass[a4paper,12pt]{extarticle}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,247mm},
+ left=20mm,
+ top=30mm,
+ }
+
+% macros
+\newcommand{\doubleLine}{
+    \vspace*{20px} \\
+}
+\newcommand{\granice}[2]{
+    _{#1}^{#2}
+}
+
+% end of macros
+
+
+\title{%
+  Wojskowa Akademia Techniczna \\~\\
+  \large Modelowanie Matematyczne Ćwiczenia \\~\\
+    \textbf{Prowadzący:} mgr. inż, Michał Kapałka \\~\\
+    \textbf{Temat:} Problem przydziału zadań zespołowi programistów}
+\author{\textbf{Autor:} Michał Konopka}
+\date{Czerwiec 2020}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\section{Opis problemu}
+Istnieje zbiór wątków które procesory muszą rozwiązać w skończonym czasie. Pewne zadania wymagają specjalnych zasobów, innym wystarczy sam procesor. Zasób może być używany tylko przez jeden proces. Wszystkie wątki powinny być wykonane w jak najkrótszym czasie z wykorzystaniem jak najmniejszej ilości energii. Każdy procesor ma inną szybkość i inną proporcję szybkość do zużycia energii. Proporcja ta zmienia się w stanie spoczynku procesora. Każdy wąek może być wykonywany tylko na jednym procesorze.
+\section{Model matematyczny opisanego problemu}
+    \subsection{Matematyczny opis cech istotnych}
+        \begin{itemize}
+            \item	$L_p$ -  liczba procesów
+            \item   $L_w$ -  liczba wąków
+            \item	$L_z$ -  liczba zasobów
+            \item	$L_s$ -  zbiór identyfikatorów procesów
+            \item   $Z$ - zbiór wszystkich identyfikatorów zadań
+            \item   $A$   - zbiór identyfikatorów wszystkich programistów NOWE
+            \item   $M$   - zbiór identyfikatorów wszystkich młodszych programistów NOWE
+            \item   $S$   - zbiór identyfikatorów wszystkich starszych programistów NOWE
+            \item   $D_e$ - Maksymalny "błąd" dyspozycyjności 
+            \item	$W_{j,z}$- wydajność j-tego programisty dla z-tego zadania(mierzona w poziomach zadania na godzinne)
+            \item	$P_z $– Trudność z -tego zadania wyrażana w poziomach
+            \item	$D_j$ – Dyspozycyjność j – tego programisty w godzinach
+            \item	$T_z$ – Czas przeznaczony na wykonanie z – tego zadania
+            \item	$MP$ – Płaca młodszego programisty na godzinne
+            \item	$SP$ – Płaca starszego programisty na godzinne
+            \item	$T_{mz}$ – Czas przeznaczony przez m -tego młodszego programistę na z- te zadanie 
+            \item	$T_{sz}$ – Czas przeznaczony przez s- tego młodszego programistę na m- te zadanie 
+            \item	$T_{pm}$ – Czas przeznaczony przez p- tego  programistę na m- te zadanie 
+            \item	$K$ – Koszt wykonania zbioru zadań
+            \item	$T_{zsm}$ – Czas wymagany na nadzór m – tego młodszego programisty , przez s – tego starszego programisty przy z -tym zadaniu
+            \item	$L_c$ – liczba cech specjalnych
+            \item	$C_{ij}$ – posiadanie i -tej cechy przez j -tego programistę
+            \item	$C_{iz}$ – wymaganie i -tej cechy do z -tego zadania 
+        \end{itemize}
+        Opis cech: $$\dot{X}=\{<L_z,N_+>,<L_j,N_+>,<L_s,N_+>,<\{P\}_{i=1}^{L_j + L_s}>$$
+        $$\{\{<W_{j,z},N_+>\}_{z=1}^{L_z}\}_{j=1}^{L_j+L_s},\{<P_z,N_+>\}_{z=1}^{L_z},\{<D_j,N_+>\}_{j=1}^{L_j+L_s},$$
+        $$\{T_z,N_{+\}_{z=1}^{L_z}},<MP,N_+>,<SP,N_+>,\{\{<T_{mz},N_+>\}_{m=1}^{L_j}\}_{z=1}^{L_z},\{\{<T_{sz},N_+>\}_{m=1}^{L_s}\}_{z=1}^{L_z},$$
+        $$<K,R_+>,\{\{\{T_{zsm},N_+\}_{z=1}^{L_z}\}_{s=1}^{L_s}\}_{j=1}^{L_j},<L_c,N_+>,$$
+        $$\{\{<C_{ij},\{0,1\}>\}_{i=1}^{L_c}\}_{j=1}^{L_s+L_j},$$
+        $${\{\{<C}_{iz},{0,1}{>\}}_{i=1}^{L_c}\}_{i=1}^{L_z}\}\}$$
+
+\section{Matematyczny opis istotnych związków między wybranymi cechami}
+    \begin{itemize}
+        \item $R_1$ : Czas przeznaczony przez programistę na wszystkie zadania może
+            różnić się maksymalnie o 5h od jego dyspozycyjności \doubleLine
+            $ R_1 = \{<\{A\}_{i=1}^{L_j + L_s}, \{\{T_{pm}\}_{p=1}^{L_j + L_s}\}_{m=1}^{L_z}, D_e> \in {?} : \forall_{p \in A} \sum_{i=1}^{L_z} T_{pi} - D_p < \pm D_e   \} $
+        \item $R_2$ : Wszystkie zadania muszą zostać zrealizowane w określonym czasie
+            \\~\\
+            $ R_2 = \{  \}$
+        
+        
+    \end{itemize}
+\end{document}
+
+
